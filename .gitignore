@@ -89,3 +89,4 @@ GTAGS
 *.rej
 \#*#
 
+drivers/gpu/mali/mali400ko/driver/src/devicedrv/mali/arch
