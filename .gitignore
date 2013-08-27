@@ -62,6 +62,10 @@ lib1funcs.S
 kernel/include/config
 kernel/include/linux/version.h
 kernel/include/generated
+include/config
+include/generated
+include/linux/version.h
+scripts
 
 # stgit generated dirs
 patches-*
