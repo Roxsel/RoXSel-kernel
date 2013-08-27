@@ -70,6 +70,12 @@ config CPU_FREQ_DEFAULT_GOV_LAGFREE
 	help
 	  Use the CPUFreq governor 'lagfree' as default.
 
+config CPU_FREQ_DEFAULT_GOV_INTELLIDEMAND
+	bool "intellidemand"
+	select CPU_FREQ_GOV_LAGFREE
+	help
+	  Use the CPUFreq governor 'intellidemand' as default.
+
 config CPU_FREQ_DEFAULT_GOV_LAZY
 	bool "lazy"
 	select CPU_FREQ_GOV_LAZY
@@ -173,6 +179,10 @@ config CPU_FREQ_GOV_LULZACTIVEQ
 
 config CPU_FREQ_GOV_LAZY
 	tristate "'lazy' cpufreq governor"
+	depends on CPU_FREQ
+
+config CPU_FREQ_GOV_INTELLIDEMAND
+	tristate "'intellidemand' cpufreq governor"
 	depends on CPU_FREQ
 
 config CPU_FREQ_GOV_LAGFREE
