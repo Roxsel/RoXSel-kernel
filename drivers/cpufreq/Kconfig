@@ -70,6 +70,12 @@ config CPU_FREQ_DEFAULT_GOV_ONDEMANDQ
 	help
 	  Use the CPUFreq governor 'ondemandq' as default.
 
+config CPU_FREQ_DEFAULT_GOV_LULZACTIVEQ
+	bool "lulzactiveq"
+	select CPU_FREQ_GOV_LULZACTIVEQ
+	help
+	  Use the CPUFreq governor 'lulzactiveq' as default.
+
 config CPU_FREQ_DEFAULT_GOV_POWERSAVE
 	bool "powersave"
 	depends on EXPERT
@@ -122,6 +128,10 @@ config CPU_FREQ_DEFAULT_GOV_INTERACTIVE
 	  'interactive' governor for latency-sensitive workloads.
 
 endchoice
+
+config CPU_FREQ_GOV_LULZACTIVEQ
+	tristate "'lulzactiveq' cpufreq governor"
+	depends on CPU_FREQ
 
 config CPU_FREQ_GOV_ONDEMANDQ
 	tristate "'ondemand' cpufreq policy governor"

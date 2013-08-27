@@ -369,6 +369,9 @@ extern struct cpufreq_governor cpufreq_gov_smartass2;
 #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMANDQ)
 extern struct cpufreq_governor cpufreq_gov_ondemandq;
 #define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_ondemandq)
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_LULZACTIVEQ)
+extern struct cpufreq_governor cpufreq_gov_lulzactiveq;
+#define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_lulzactiveq)
 #endif
 
 
