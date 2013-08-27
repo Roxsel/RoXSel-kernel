@@ -64,6 +64,12 @@ config CPU_FREQ_DEFAULT_GOV_SMARTASS2
 	help
 	  Use the CPUFreq governor 'smartassV2' as default.
 
+config CPU_FREQ_DEFAULT_GOV_LAGFREE
+	bool "lagfree"
+	select CPU_FREQ_GOV_LAGFREE
+	help
+	  Use the CPUFreq governor 'lagfree' as default.
+
 config CPU_FREQ_DEFAULT_GOV_LAZY
 	bool "lazy"
 	select CPU_FREQ_GOV_LAZY
@@ -167,6 +173,10 @@ config CPU_FREQ_GOV_LULZACTIVEQ
 
 config CPU_FREQ_GOV_LAZY
 	tristate "'lazy' cpufreq governor"
+	depends on CPU_FREQ
+
+config CPU_FREQ_GOV_LAGFREE
+	tristate "'lagfree' cpufreq governor"
 	depends on CPU_FREQ
 
 config CPU_FREQ_GOV_ONDEMANDQ
