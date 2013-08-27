@@ -160,7 +160,7 @@ config CPU_FREQ_GOV_LULZACTIVEQ
 	depends on CPU_FREQ
 
 config CPU_FREQ_GOV_ONDEMANDQ
-	tristate "'ondemand' cpufreq policy governor"
+	tristate "'ondemandq' cpufreq policy governor"
 	depends on HAS_EARLYSUSPEND
 	help
 	  Based on ondemand,hotplug in suspend.
