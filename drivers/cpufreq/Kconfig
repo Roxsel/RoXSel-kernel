@@ -64,6 +64,12 @@ config CPU_FREQ_DEFAULT_GOV_SMARTASS2
 	help
 	  Use the CPUFreq governor 'smartassV2' as default.
 
+config CPU_FREQ_DEFAULT_GOV_ONDEMANDQ
+	bool "ondemandq"
+	select CPU_FREQ_GOV_ONDEMANDQ
+	help
+	  Use the CPUFreq governor 'ondemandq' as default.
+
 config CPU_FREQ_DEFAULT_GOV_POWERSAVE
 	bool "powersave"
 	depends on EXPERT
@@ -116,6 +122,12 @@ config CPU_FREQ_DEFAULT_GOV_INTERACTIVE
 	  'interactive' governor for latency-sensitive workloads.
 
 endchoice
+
+config CPU_FREQ_GOV_ONDEMANDQ
+	tristate "'ondemand' cpufreq policy governor"
+	depends on HAS_EARLYSUSPEND
+	help
+	  Based on ondemand,hotplug in suspend.
 
 config CPU_FREQ_GOV_SMARTASS2
 	tristate "'smartassV2' cpufreq governor"
