@@ -68,10 +68,6 @@ extern int mali_l2_max_reads;
 module_param(mali_l2_max_reads, int, S_IRUSR | S_IWUSR | S_IWGRP | S_IRGRP | S_IROTH);
 MODULE_PARM_DESC(mali_l2_max_reads, "Maximum reads for Mali L2 cache");
 
-extern unsigned int mali_utilization_sampling_rate;
-module_param(mali_utilization_sampling_rate, uint, S_IRUSR | S_IWUSR | S_IWGRP | S_IRGRP | S_IROTH);
-MODULE_PARM_DESC(mali_utilization_sampling_rate, "Mali utilization time out"); 
-
 extern int mali_l2_registers_size;
 module_param(mali_l2_registers_size, int, S_IRUGO); /* r--r--r-- */
 MODULE_PARM_DESC(mali_l2_registers_size, "Mali L2 cache registers size");
