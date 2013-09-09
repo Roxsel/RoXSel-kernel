@@ -189,10 +189,10 @@ int parse_args(const char *name,
 		args = next_arg(args, &param, &val);
 		irq_was_disabled = irqs_disabled();
 		ret = parse_one(param, val, params, num, unknown);
-		if (irq_was_disabled && !irqs_disabled())
-			pr_warn("%s: option '%s' enabled irq's!\n",
-					doing, param); 
-		}
+		if (irq_was_disabled && !irqs_disabled()) {
+			printk(KERN_WARNING "parse_args(): option '%s' enabled "
+				"irq's!\n", param);
+		} 
 		switch (ret) {
 		case -ENOENT:
 			printk(KERN_ERR "%s: Unknown parameter `%s'\n",
