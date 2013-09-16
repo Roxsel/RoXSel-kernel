@@ -6,6 +6,7 @@ INITRAMFSDIR="$BASEDIR/usr/4.2.2_touch.list"
 #INITRAMFSDIR="$BASEDIR/usr/4.2.2.list"
 TOOLCHAIN="/home/robert/toolchain/arm-eabi-4.7/bin/arm-eabi-"
 VERSION="Touch_4.2.2_v3"
+#VERSION="Kernel_4.2.2_v3"
 
 cd $BASEDIR
 STARTTIME=$SECONDS
