@@ -1,0 +1,10 @@
+assert(getprop("ro.product.device") == "codina" || getprop("ro.build.product") == "codina" || 
+       getprop("ro.product.device") == "i8160" || getprop("ro.build.product") == "i8160" || 
+       getprop("ro.product.device") == "GT-I8160" || getprop("ro.build.product") == "GT-I8160");
+mount("ext4", "EMMC", "/dev/block/mmcblk0p3", "/system");
+package_extract_file("kernel.bin.md5", "/tmp/kernel.bin.md5");
+package_extract_file("flash_roxsel.sh", "/tmp/flash_roxsel.sh");
+set_perm(0, 0, 0777, "/tmp/flash_roxsel.sh");
+run_program("/tmp/flash_roxsel.sh");
+unmount("/system");
+
