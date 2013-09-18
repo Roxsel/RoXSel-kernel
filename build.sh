@@ -17,7 +17,7 @@ then
 fi
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-OUTDIR="$BASEDIR/out"
+OUTDIR="$BASEDIR/out_$1_$2_$3"
 TOOLCHAIN="/home/robert/toolchain/arm-eabi-4.7/bin/arm-eabi-"
 KERNEL_VERSION="v3"
 
