@@ -17,7 +17,7 @@ then
 fi
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-OUTDIR="$BASEDIR/out_$1_$2_$3"
+OUTDIR="$BASEDIR/out/$1_$2_$3"
 TOOLCHAIN="/home/robert/toolchain/arm-eabi-4.7/bin/arm-eabi-"
 KERNEL_VERSION="v3"
 
@@ -25,7 +25,7 @@ case "$4" in
 	clean)
 		echo -e "\n\n Cleaning Kernel Sources...\n\n"
 		make mrproper ARCH=arm CROSS_COMPILE=$TOOLCHAIN
-		rm -rf $OUTDIR
+		rm -rf "$BASEDIR/out/"
 		ENDTIME=$SECONDS
 		echo -e "\n\n Finished in $((ENDTIME-STARTTIME)) Seconds\n\n"
  		;;
