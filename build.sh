@@ -7,7 +7,7 @@ then
 	echo "./build.sh 'ROM' 'ANDROID_VERSION' 'RECOVERY'"
 	echo "Available ROM's: cm, stock, miui"
 	echo "Available ANDROID_VERSION's: 4.1; 4.2.2 (only cm)"
-	echo "Available RECOVERY's: default (not available for stock for now), touch"
+	echo "Available RECOVERY's: default, touch"
 	echo "if you want to build kernel for 4.2.2 CyanogenMod Based ROM (like PAC) with touch recovery"
 	echo "./build.sh cm 4.2.2 touch"
 	echo "if you want to build kernel for MIUI with touch recovery"

@@ -7,3 +7,4 @@
 ./build.sh miui 4.1.2 default
 ./build.sh miui 4.1.2 touch
 ./build.sh stock 4.1.2 default
+./build.sh stock 4.1.2 touch

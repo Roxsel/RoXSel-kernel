@@ -58,12 +58,6 @@ config CPU_FREQ_DEFAULT_GOV_PERFORMANCE
 	  the frequency statically to the highest frequency supported by
 	  the CPU.
 
-config CPU_FREQ_DEFAULT_GOV_SMARTASS2
-	bool "smartass2"
-	select CPU_FREQ_GOV_SMARTASS2
-	help
-	  Use the CPUFreq governor 'smartassV2' as default.
-
 config CPU_FREQ_DEFAULT_GOV_LIONHEART
 	bool "lionheart"
 	select CPU_FREQ_GOV_LIONHEART
@@ -204,12 +198,6 @@ config CPU_FREQ_GOV_ONDEMANDQ
 	depends on HAS_EARLYSUSPEND
 	help
 	  Based on ondemand,hotplug in suspend.
-
-config CPU_FREQ_GOV_SMARTASS2
-	tristate "'smartassV2' cpufreq governor"
-	depends on CPU_FREQ
-	help
-	  'smartassV2' - a "smart" optimized governor!
 
 config CPU_FREQ_GOV_PERFORMANCE
 	tristate "'performance' governor"
