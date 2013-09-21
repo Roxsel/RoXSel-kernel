@@ -55,8 +55,10 @@ case "$4" in
 
 		if [ "$1" == "stock" ]
 		then
+		
+		mkdir -p $INITRAMFSDIR/lib/modules/
 		cp fs/cifs/cifs.ko $INITRAMFSDIR/lib/modules/cifs.ko
-		cp fs/exfat $INITRAMFSDIR/lib/modules/exfat.ko
+		cp fs/exfat/exfat.ko $INITRAMFSDIR/lib/modules/exfat.ko
 		cp drivers/scsi/scsi_wait_scan.ko $INITRAMFSDIR/lib/modules/scsi_wait_scan.ko
 		cp drivers/samsung/j4fs/j4fs.ko $INITRAMFSDIR/lib/modules/j4fs.ko
 		cp drivers/bluetooth/bthid/bthid.ko $INITRAMFSDIR/lib/modules/bthid.ko
@@ -65,7 +67,7 @@ case "$4" in
 		cp drivers/staging/android/logger.ko $INITRAMFSDIR/lib/modules/logger.ko
 		cp drivers/char/frandom/frandom.ko $INITRAMFSDIR/lib/modules/frandom.ko
 		cp drivers/char/hw_random/rng-core.ko $INITRAMFSDIR/lib/modules/rng-core.ko
-		cp drivers/net/wireless/bcm4330/dhd.ko $INITRAMFSDIR/lib/modules/dhd.ko
+		cp drivers/net/wireless/bcmdhd/dhd.ko $INITRAMFSDIR/lib/modules/dhd.ko
 
 
 		echo -e "\n\n Creating zImage...\n\n"
@@ -93,8 +95,8 @@ case "$4" in
 
 		else
 		echo -e "\n\n Copying Modules to Output Folder...\n\n"
+		
 		mkdir -p $OUTDIR/system/lib/modules/
-
 		cp fs/cifs/cifs.ko $OUTDIR/system/lib/modules/cifs.ko
 		cp fs/exfat/exfat.ko $OUTDIR/system/lib/modules/exfat.ko
 		cp drivers/scsi/scsi_wait_scan.ko $OUTDIR/system/lib/modules/scsi_wait_scan.ko
