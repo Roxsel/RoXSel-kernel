@@ -36,7 +36,7 @@ case "$4" in
 	
 		if [ "$1" == "stock" ]
 		then
-		INITRAMFSDIR="/home/robert/Ramdisk/Stock/$2"
+		INITRAMFSDIR="/home/robert/Ramdisk/Stock/$3"
 		else
 		INITRAMFSDIR="$BASEDIR/usr/$1_$2_$3.list"
 		fi
