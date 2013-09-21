@@ -7,11 +7,11 @@ then
 	echo "./build.sh 'ROM' 'ANDROID_VERSION' 'RECOVERY'"
 	echo "Available ROM's: cm, stock, miui"
 	echo "Available ANDROID_VERSION's: 4.1; 4.2.2 (only cm)"
-	echo "Available RECOVERY's: default, touch"
+	echo "Available RECOVERY's: cwm, touch"
 	echo "if you want to build kernel for 4.2.2 CyanogenMod Based ROM (like PAC) with touch recovery"
 	echo "./build.sh cm 4.2.2 touch"
-	echo "if you want to build kernel for MIUI with touch recovery"
-	echo "./build.sh miui 4.1.2 touch"
+	echo "if you want to build kernel for MIUI with default recovery"
+	echo "./build.sh miui 4.1.2 cwm"
 	echo "-------------------"
 	exit 1
 fi
@@ -33,15 +33,19 @@ case "$4" in
 		ROM=$1
 		VERSION=$2
 		RECOVERY=$3
-	
+
 		if [ "$1" == "stock" ]
 		then
-		INITRAMFSDIR="/home/robert/Ramdisk/Stock/$3"
+		INITRAMFSDIR="$BASEDIR/Ramdisk/Stock/$3"
 		else
-		INITRAMFSDIR="$BASEDIR/usr/$1_$2_$3.list"
+		
+		rm -f "$BASEDIR/usr/temp.list"
+		cp "$BASEDIR/usr/basic.list" "$BASEDIR/usr/temp.list"
+		sed -i 's/!ANDROID_VERSION!/'$2'/g' "$BASEDIR/usr/temp.list"		
+		sed -i 's/!RECOVERY!/'$3'/g' "$BASEDIR/usr/temp.list"		
+
+		INITRAMFSDIR="$BASEDIR/usr/temp.list"
 		fi
-				
-		echo $INITRAMFSDIR
 
 		echo -e "\n\n Configuring I8160 Kernel...\n\n"
 		make RoXSel_defconfig ARCH=arm CROSS_COMPILE=$TOOLCHAIN
