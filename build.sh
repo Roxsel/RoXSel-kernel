@@ -11,7 +11,7 @@ then
 	echo "if you want to build kernel for 4.2.2 CyanogenMod Based ROM (like PAC) with touch recovery"
 	echo "./build.sh cm 4.2.2 touch"
 	echo "if you want to build kernel for MIUI with touch recovery"
-	echo "./build.sh miui 4.1 touch"
+	echo "./build.sh miui 4.1.2 touch"
 	echo "-------------------"
 	exit 1
 fi
@@ -36,7 +36,7 @@ case "$4" in
 	
 		if [ "$1" == "stock" ]
 		then
-		INITRAMFSDIR="/home/robert/Ramdisk/Stock/touch"
+		INITRAMFSDIR="/home/robert/Ramdisk/Stock/$3"
 		else
 		INITRAMFSDIR="$BASEDIR/usr/$1_$2_$3.list"
 		fi
