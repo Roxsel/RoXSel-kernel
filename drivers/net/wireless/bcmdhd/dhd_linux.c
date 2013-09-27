@@ -22,7 +22,7 @@
  * software in any way with any other Broadcom software provided under a license
  * other than the GPL, without Broadcom's express prior written consent.
  *
- * $Id: dhd_linux.c 364074 2012-10-22 12:24:55Z $
+ * $Id: dhd_linux.c 373329 2012-12-07 04:46:09Z $
  */
 
 #include <typedefs.h>
@@ -73,6 +73,9 @@
 #ifdef WLMEDIA_HTSF
 #include <linux/time.h>
 #include <htsf.h>
+
+#include <linux/module.h>
+#include <linux/moduleparam.h>
 
 #define HTSF_MINLEN 200    /* min. packet length to timestamp */
 #define HTSF_BUS_DELAY 150 /* assume a fix propagation in us  */
@@ -134,7 +137,6 @@ static int dhd_device_event(struct notifier_block *this,
 static struct notifier_block dhd_notifier = {
 	.notifier_call = dhd_device_event
 };
-extern struct net_device_ops wl_cfgp2p_if_ops;
 #endif /* ARP_OFFLOAD_SUPPORT */
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)) && defined(CONFIG_PM_SLEEP)
@@ -143,9 +145,9 @@ volatile bool dhd_mmc_suspend = FALSE;
 DECLARE_WAIT_QUEUE_HEAD(dhd_dpc_wait);
 #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)) && defined(CONFIG_PM_SLEEP) */
 
-#if defined(OOB_INTR_ONLY)
+#if defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID)
 extern void dhd_enable_oob_intr(struct dhd_bus *bus, bool enable);
-#endif /* defined(OOB_INTR_ONLY) */
+#endif /* defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID) */
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)) && (1)
 static void dhd_hang_process(struct work_struct *work);
 #endif 
@@ -536,6 +538,9 @@ static void dhd_net_if_unlock_local(dhd_info_t *dhd);
 static void dhd_suspend_lock(dhd_pub_t *dhdp);
 static void dhd_suspend_unlock(dhd_pub_t *dhdp);
 
+bool wifi_pm = false;
+module_param(wifi_pm, bool, 0755);
+
 #ifdef WLMEDIA_HTSF
 void htsf_update(dhd_info_t *dhd, void *data);
 tsf_t prev_tsf, cur_tsf;
@@ -582,8 +587,7 @@ static int dhd_sleep_pm_callback(struct notifier_block *nfb, unsigned long actio
 {
 	int ret = NOTIFY_DONE;
 
-#if defined(CONFIG_ARCH_RHEA) || defined(CONFIG_ARCH_CAPRI) || (LINUX_VERSION_CODE <= \
-	KERNEL_VERSION(2, 6, 39))
+#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 39))
 	switch (action) {
 	case PM_HIBERNATION_PREPARE:
 	case PM_SUSPEND_PREPARE:
@@ -666,11 +670,18 @@ static int dhd_set_suspend(int value, dhd_pub_t *dhd)
 	int bcn_li_bcn;
 #endif /* ENABLE_BCN_LI_BCN_WAKEUP */
 #ifdef PASS_ALL_MCAST_PKTS
+	struct dhd_info *dhdinfo = dhd->info;
 	uint32 allmulti;
+	uint i;
 #endif /* PASS_ALL_MCAST_PKTS */
 
 	DHD_TRACE(("%s: enter, value = %d in_suspend=%d\n",
 		__FUNCTION__, value, dhd->in_suspend));
+
+	if(wifi_pm) {
+		power_mode = PM_FAST;
+		printk(KERN_DEBUG "[%s]: Wifi Power Management Policy changed to PM_FAST \n",__func__);
+	}
 
 	dhd_suspend_lock(dhd);
 	if (dhd && dhd->up) {
@@ -693,7 +704,11 @@ static int dhd_set_suspend(int value, dhd_pub_t *dhd)
 				allmulti = 0;
 				bcm_mkiovar("allmulti", (char *)&allmulti,
 					4, iovbuf, sizeof(iovbuf));
-				dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf, sizeof(iovbuf), TRUE, 0);
+				for (i = 0; i < DHD_MAX_IFS; i++) {
+					if (dhdinfo->iflist[i] && dhdinfo->iflist[i]->net)
+						dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf,
+							sizeof(iovbuf), TRUE, i);
+				}
 #endif /* PASS_ALL_MCAST_PKTS */
 
 				/* If DTIM skip is set up as default, force it to wake
@@ -738,7 +753,11 @@ static int dhd_set_suspend(int value, dhd_pub_t *dhd)
 				allmulti = 1;
 				bcm_mkiovar("allmulti", (char *)&allmulti,
 					4, iovbuf, sizeof(iovbuf));
-				dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf, sizeof(iovbuf), TRUE, 0);
+				for (i = 0; i < DHD_MAX_IFS; i++) {
+					if (dhdinfo->iflist[i] && dhdinfo->iflist[i]->net)
+						dhd_wl_ioctl_cmd(dhd, WLC_SET_VAR, iovbuf,
+							sizeof(iovbuf), TRUE, i);
+				}
 #endif /* PASS_ALL_MCAST_PKTS */
 
 				/* restore pre-suspend setting for dtim_skip */
@@ -773,7 +792,9 @@ static int dhd_suspend_resume_helper(struct dhd_info *dhd, int val, int force)
 
 	DHD_OS_WAKE_LOCK(dhdp);
 	/* Set flag when early suspend was called */
-	dhdp->in_suspend = val;
+	if (dhdp->up)
+	  dhdp->in_suspend = val;
+
 	if ((force || !dhdp->suspend_disable_flag) &&
 		dhd_support_sta_mode(dhdp))
 	{
@@ -969,9 +990,13 @@ _dhd_set_multicast_list(dhd_info_t *dhd, int ifidx)
 	for (i = 0; i < DHD_MAX_IFS; i++) {
 		if (dhd->iflist[i]) {
 			dev = dhd->iflist[i]->net;
+			if (!dev)
+				continue;
 #else
 	ASSERT(dhd && dhd->iflist[ifidx]);
 	dev = dhd->iflist[ifidx]->net;
+	if (!dev)
+		return;
 #endif /* MCAST_LIST_ACCUMULATION */
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)
 	netif_addr_lock_bh(dev);
@@ -1756,6 +1781,8 @@ dhd_rx_frame(dhd_pub_t *dhdp, int ifidx, void *pktbuf, int numpkt, uint8 chan)
 		if (ifp == NULL) {
 			DHD_ERROR(("%s: ifp is NULL. drop packet\n",
 				__FUNCTION__));
+			pnext = PKTNEXT(dhdp->osh, pktbuf);
+			PKTSETNEXT(wl->sh.osh, pktbuf, NULL);
 			PKTFREE(dhdp->osh, pktbuf, TRUE);
 			continue;
 		}
@@ -1768,6 +1795,8 @@ dhd_rx_frame(dhd_pub_t *dhdp, int ifidx, void *pktbuf, int numpkt, uint8 chan)
 #endif /* PROP_TXSTATUS_VSDB */
 			DHD_ERROR(("%s: net device is NOT registered yet. drop packet\n",
 			__FUNCTION__));
+			pnext = PKTNEXT(dhdp->osh, pktbuf);
+			PKTSETNEXT(wl->sh.osh, pktbuf, NULL);
 			PKTFREE(dhdp->osh, pktbuf, TRUE);
 			continue;
 		}
@@ -2940,6 +2969,15 @@ int dhd_do_driver_init(struct net_device *net)
 		return -EINVAL;
 	}
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25))
+#ifdef MULTIPLE_SUPPLICANT
+	if (mutex_is_locked(&_dhd_sdio_mutex_lock_) != 0) {
+		DHD_ERROR(("%s : dhdsdio_probe is already running!\n", __FUNCTION__));
+		return 0;
+	}
+#endif /* MULTIPLE_SUPPLICANT */
+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 25) */
+
 	dhd = *(dhd_info_t **)netdev_priv(net);
 
 	/* If driver is already initialized, do nothing
@@ -3237,7 +3275,7 @@ dhd_attach(osl_t *osh, struct dhd_bus *bus, uint bus_hdrlen)
 		dhd->threads_only = FALSE;
 	}
 
-	if (dhd_dpc_prio >= 0) {
+	if (dhd_watchdog_prio >= 0) {
 		/* Initialize watchdog thread */
 #ifdef USE_KTHREAD_API
 		PROC_START2(dhd_watchdog_thread, dhd, &dhd->thr_wdt_ctl, 0, "dhd_watchdog_thread");
@@ -3393,10 +3431,8 @@ dhd_bus_start(dhd_pub_t *dhdp)
 		return -ENODEV;
 	}
 
-#ifndef BCMSPI_ANDROID
 	/* Enable oob at firmware */
 	dhd_enable_oob_intr(dhd->pub.bus, TRUE);
-#endif /* !BCMSPI_ANDROID */
 #endif /* defined(OOB_INTR_ONLY) || defined(BCMSPI_ANDROID) */
 
 	/* If bus is not ready, can't come up */
@@ -4163,6 +4199,11 @@ aoe_update_host_ipv4_table(dhd_pub_t *dhd_pub, u32 ipa, bool add, int idx)
 #endif
 }
 
+/*
+ * Notification mechanism from kernel to our driver. This function is called by the Linux kernel
+ * whenever there is an event related to an IP address.
+ * ptr : kernel provided pointer to IP address that has changed
+ */
 static int dhd_device_event(struct notifier_block *this,
 	unsigned long event,
 	void *ptr)
@@ -4177,15 +4218,18 @@ static int dhd_device_event(struct notifier_block *this,
 		return NOTIFY_DONE;
 	if (!ifa || !(ifa->ifa_dev->dev))
 		return NOTIFY_DONE;
+
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 31))
+	/* Filter notifications meant for non Broadcom devices */
 	if ((ifa->ifa_dev->dev->netdev_ops != &dhd_ops_pri) &&
-		(ifa->ifa_dev->dev->netdev_ops != &dhd_ops_virt)
+	    (ifa->ifa_dev->dev->netdev_ops != &dhd_ops_virt)) {
 #ifdef WLP2P
-		&& (ifa->ifa_dev->dev->netdev_ops != &wl_cfgp2p_if_ops)
+		if (!wl_cfgp2p_is_ifops(ifa->ifa_dev->dev->netdev_ops))
 #endif
-		)
 		return NOTIFY_DONE;
-#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 31)) */
+	}
+#endif /* LINUX_VERSION_CODE */
+
 	dhd = *(dhd_info_t **)netdev_priv(ifa->ifa_dev->dev);
 	if (!dhd)
 		return NOTIFY_DONE;
