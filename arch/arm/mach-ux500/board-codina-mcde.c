@@ -38,8 +38,8 @@
 
 #ifdef CONFIG_FB_MCDE
 
-#define PRCMU_DPI_CLK_SHARP_FREQ	67000000
-#define PRCMU_DPI_CLK_SMD_FREQ		67000000
+#define PRCMU_DPI_CLK_SHARP_FREQ	30720000
+#define PRCMU_DPI_CLK_SMD_FREQ		49920000
 
 enum {
 	PRIMARY_DISPLAY_ID,
@@ -124,8 +124,6 @@ static int pri_display_reset(struct ssg_dpi_display_platform_data *pd);
 static int lcd_gpio_cfg_earlysuspend(void);
 static int lcd_gpio_cfg_lateresume(void);
 
-extern void codina_backlight_on_off(bool on);
-
 /* Taken from the programmed value of the LCD clock in PRCMU */
 #define FRAME_PERIOD_MS		17	/* rounded up to the nearest ms */
 
@@ -157,7 +155,6 @@ struct ssg_dpi_display_platform_data codina_dpi_pri_display_info = {
 	.reset		= pri_display_reset,
 	.lcd_pwr_setup = pri_lcd_pwr_setup,	
 	.power_on	= pri_display_power_on,
-	.bl_on_off = codina_backlight_on_off,
 
 	.gpio_cfg_earlysuspend = lcd_gpio_cfg_earlysuspend,
 	.gpio_cfg_lateresume = lcd_gpio_cfg_lateresume,
@@ -397,12 +394,6 @@ if ((reqs->num_rot_channels && reqs->num_overlays > 1) ||
 						dev_name(dev), req_ddr);
 		pr_info("Requested APE QOS = %d\n", req_ape);
 
-		if (update_first == true) {
-			codina_backlight_on_off(false);
-			msleep(1);
-			codina_backlight_on_off(true);
-			update_first = false;
-		}
 	}
 	
 }
