@@ -92,3 +92,14 @@ GTAGS
 drivers/gpu/mali/mali400ko/driver/src/devicedrv/mali/arch
 out/
 usr/temp.list
+arch/arm/boot/Image
+arch/arm/boot/compressed/vmlinux.lds
+arch/arm/boot/zImage
+arch/arm/kernel/vmlinux.lds
+drivers/tty/vt/consolemap_deftbl.c
+drivers/tty/vt/defkeymap.c
+kernel/timeconst.h
+lib/crc32table.h
+lib/gen_crc32table
+usr/gen_init_cpio
+usr/initramfs_data.cpio
