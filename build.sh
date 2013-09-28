@@ -87,7 +87,7 @@ case "$4" in
 		cp -avr flashable/stock/META-INF $OUTDIR
 		cp flashable/stock/flash_roxsel.sh $OUTDIR
 		cd $OUTDIR
-		zip -r RoXSel_stock_$VERSION.zip .
+		zip -r RoXSel_$KERNEL_VERSION_stock_$RECOVERY.zip .
 		cd $BASEDIR
 
 		echo -e "\n\n Cleaning Output Folder...\n\n"
@@ -115,7 +115,7 @@ case "$4" in
 		cp arch/arm/boot/zImage $OUTDIR/boot.img
 		cp -avr flashable/META-INF $OUTDIR
 		cd $OUTDIR
-		zip -r RoXSel_$2_$3_$KERNEL_VERSION.zip .
+		zip -r RoXSel_$KERNEL_VERSION_$2_$3.zip .
 		cd $BASEDIR
 
 		echo -e "\n\n Cleaning Output Folder...\n\n"
