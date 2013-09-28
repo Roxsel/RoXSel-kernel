@@ -18,7 +18,7 @@ fi
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 OUTDIR="$BASEDIR/out/$1_$2_$3"
-TOOLCHAIN="/home/robert/toolchain/arm-eabi-4.6/bin/arm-eabi-"
+TOOLCHAIN="/home/robert/toolchain/arm-eabi-4.7/bin/arm-eabi-"
 KERNEL_VERSION="v3"
 
 case "$4" in
@@ -113,7 +113,7 @@ case "$4" in
 		cp arch/arm/boot/zImage $OUTDIR/boot.img
 		cp -avr flashable/META-INF $OUTDIR
 		cd $OUTDIR
-		zip -r RoXSel_$1_$2_$3_$KERNEL_VERSION.zip .
+		zip -r RoXSel_$2_$3_$KERNEL_VERSION.zip .
 		cd $BASEDIR
 
 		echo -e "\n\n Cleaning Output Folder...\n\n"
