@@ -39,6 +39,8 @@ case "$4" in
 		INITRAMFSDIR="$BASEDIR/Ramdisk/Stock/$3"
 		else
 		
+		rm -rf "$OUTDIR"
+		
 		rm -f "$BASEDIR/usr/temp.list"
 		cp "$BASEDIR/usr/basic.list" "$BASEDIR/usr/temp.list"
 		sed -i 's/!ANDROID_VERSION!/'$2'/g' "$BASEDIR/usr/temp.list"		
