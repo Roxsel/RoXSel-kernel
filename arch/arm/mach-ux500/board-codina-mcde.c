@@ -135,10 +135,8 @@ struct ssg_dpi_display_platform_data codina_dpi_pri_display_info = {
 	.reset_gpio		= LCD_RESX_CODINA_R0_0,
 	.pwr_gpio		= LCD_PWR_EN_CODINA_R0_0,
 	.bl_ctrl		= false,
-
-	.power_on_delay		= 5,  /* Optimize Up Delay */
-	.reset_delay		= 5,  /* Optimize Wake Up Delay */
-	.sleep_out_delay	= 20, /* Optimize Wake Up Delay */
+	.power_on_delay		= 5,  /* Optimize Wake Up */
+	.reset_delay		= 5,  /* Optimize Wake Up */
 
 	.display_off_delay	= 25,
 	.sleep_in_delay		= 120,
@@ -158,7 +156,7 @@ struct ssg_dpi_display_platform_data codina_dpi_pri_display_info = {
 	.reset		= pri_display_reset,
 	.lcd_pwr_setup = pri_lcd_pwr_setup,	
 	.power_on	= pri_display_power_on,
-	.bl_on_off = codina_backlight_on_off, 
+	.bl_on_off = codina_backlight_on_off,
 
 	.gpio_cfg_earlysuspend = lcd_gpio_cfg_earlysuspend,
 	.gpio_cfg_lateresume = lcd_gpio_cfg_lateresume,
@@ -403,7 +401,7 @@ if ((reqs->num_rot_channels && reqs->num_overlays > 1) ||
 			msleep(1);
 			codina_backlight_on_off(true);
 			update_first = false;
-		} 
+		}
 	}
 	
 }
@@ -467,7 +465,7 @@ int __init init_codina_display_devices(void)
 		codina_dpi_pri_display_info.video_mode.hfp = 8;
 		codina_dpi_pri_display_info.video_mode.vsw = 2;
 		codina_dpi_pri_display_info.video_mode.vbp = 8;
-		codina_dpi_pri_display_info.video_mode.vfp = 18;
+		codina_dpi_pri_display_info.video_mode.vfp = 8;
 		codina_dpi_pri_display_info.sleep_out_delay = 50;
 	} else {
 		generic_display0.name = LCD_DRIVER_NAME_S6D27A1;

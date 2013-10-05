@@ -42,7 +42,7 @@
 #include <video/mcde_display-dpi.h>
 #include <video/mcde_display_ssg_dpi.h>
 
-#define ESD_PORT_NUM 93
+#define ESD_PORT_NUM 		93
 #define SPI_COMMAND		0
 #define SPI_DATA		1
 
@@ -51,7 +51,7 @@
 #define LDI_STATE_ON		1
 #define LDI_STATE_OFF		0
 /* Taken from the programmed value of the LCD clock in PRCMU */
-#define PIX_CLK_FREQ		27687000
+#define PIX_CLK_FREQ		29120000
 #define VMODE_XRES		480
 #define VMODE_YRES		800
 #define POWER_IS_ON(pwr)	((pwr) <= FB_BLANK_NORMAL)
@@ -567,7 +567,7 @@ if (lcd->pd->sleep_out_delay)
 
 static int ws2401_dpi_ldi_disable(struct ws2401_dpi *lcd)
 {
-	int ret;
+	int ret = 0;
 
 	dev_dbg(lcd->dev, "ws2401_dpi_ldi_disable\n");
         ret |= ws2401_write_dcs_sequence(lcd,
@@ -768,7 +768,6 @@ static struct lcd_ops ws2401_dpi_lcd_ops = {
 struct backlight_properties ws2401_dpi_backlight_props = {
 	.brightness	= DEFAULT_BRIGHTNESS,
 	.max_brightness = MAX_BRIGHTNESS,
-	.type = BACKLIGHT_RAW,
 };
 
 static int ws2401_dpi_get_brightness(struct backlight_device *bd)
@@ -878,7 +877,7 @@ static void est_test_timer_func(unsigned long data)
 }
 #endif
 #endif
-static int __init ws2401_dpi_spi_probe(struct spi_device *spi)
+static int __devinit ws2401_dpi_spi_probe(struct spi_device *spi)
 {
 	int ret = 0;
 	struct ws2401_dpi *lcd = container_of(spi->dev.driver,
@@ -1055,7 +1054,7 @@ static int __devinit ws2401_dpi_mcde_probe(
 	}
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
-	lcd->earlysuspend.level   = EARLY_SUSPEND_LEVEL_DISABLE_FB - 1;
+	lcd->earlysuspend.level   = EARLY_SUSPEND_LEVEL_DISABLE_FB - 0;
 	lcd->earlysuspend.suspend = ws2401_dpi_mcde_early_suspend;
 	lcd->earlysuspend.resume  = ws2401_dpi_mcde_late_resume;
 	register_early_suspend(&lcd->earlysuspend);
@@ -1218,7 +1217,7 @@ static void ws2401_dpi_mcde_late_resume(
 }
 #endif
 
-static struct mcde_display_driver ws2401_dpi_mcde = {
+static struct mcde_display_driver ws2401_dpi_mcde __refdata = {
 	.probe          = ws2401_dpi_mcde_probe,
 	.remove         = ws2401_dpi_mcde_remove,
 	.shutdown	= ws2401_dpi_mcde_shutdown,
