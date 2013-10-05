@@ -768,6 +768,7 @@ static struct lcd_ops ws2401_dpi_lcd_ops = {
 struct backlight_properties ws2401_dpi_backlight_props = {
 	.brightness	= DEFAULT_BRIGHTNESS,
 	.max_brightness = MAX_BRIGHTNESS,
+	.type = BACKLIGHT_RAW,
 };
 
 static int ws2401_dpi_get_brightness(struct backlight_device *bd)
@@ -1054,7 +1055,7 @@ static int __devinit ws2401_dpi_mcde_probe(
 	}
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
-	lcd->earlysuspend.level   = EARLY_SUSPEND_LEVEL_DISABLE_FB - 0;
+	lcd->earlysuspend.level   = EARLY_SUSPEND_LEVEL_DISABLE_FB - 1;
 	lcd->earlysuspend.suspend = ws2401_dpi_mcde_early_suspend;
 	lcd->earlysuspend.resume  = ws2401_dpi_mcde_late_resume;
 	register_early_suspend(&lcd->earlysuspend);
