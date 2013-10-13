@@ -51,7 +51,7 @@
 #define LDI_STATE_ON		1
 #define LDI_STATE_OFF		0
 /* Taken from the programmed value of the LCD clock in PRCMU */
-#define PIX_CLK_FREQ		29120000
+#define PIX_CLK_FREQ		26000000
 #define VMODE_XRES		480
 #define VMODE_YRES		800
 #define POWER_IS_ON(pwr)	((pwr) <= FB_BLANK_NORMAL)
@@ -567,7 +567,7 @@ if (lcd->pd->sleep_out_delay)
 
 static int ws2401_dpi_ldi_disable(struct ws2401_dpi *lcd)
 {
-	int ret = 0;
+	int ret;
 
 	dev_dbg(lcd->dev, "ws2401_dpi_ldi_disable\n");
         ret |= ws2401_write_dcs_sequence(lcd,
