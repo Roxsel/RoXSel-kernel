@@ -6,8 +6,8 @@ then
 	echo "Usage:"
 	echo "./build.sh 'ROM' 'ANDROID_VERSION' 'RECOVERY'"
 	echo "Available ROM's: cm, stock, miui"
-	echo "Available ANDROID_VERSION's: 4.1; 4.2.2 (only cm)"
-	echo "Available RECOVERY's: cwm, touch"
+	echo "Available ANDROID_VERSION's: 4.1; 4.2.2; 4.3.1"
+	echo "Available RECOVERY's: cwm, touch, swype (tested only on 4.3.1)"
 	echo "if you want to build kernel for 4.2.2 CyanogenMod Based ROM (like PAC) with touch recovery"
 	echo "./build.sh cm 4.2.2 touch"
 	echo "if you want to build kernel for MIUI with default recovery"
@@ -38,13 +38,13 @@ case "$4" in
 		then
 		INITRAMFSDIR="$BASEDIR/Ramdisk/Stock/$3"
 		else
-		
+
 		rm -rf "$OUTDIR"
-		
+
 		rm -f "$BASEDIR/usr/temp.list"
 		cp "$BASEDIR/usr/basic.list" "$BASEDIR/usr/temp.list"
-		sed -i 's/!ANDROID_VERSION!/'$2'/g' "$BASEDIR/usr/temp.list"		
-		sed -i 's/!RECOVERY!/'$3'/g' "$BASEDIR/usr/temp.list"		
+		sed -i 's/!ANDROID_VERSION!/'$2'/g' "$BASEDIR/usr/temp.list"
+		sed -i 's/!RECOVERY!/'$3'/g' "$BASEDIR/usr/temp.list"
 
 		INITRAMFSDIR="$BASEDIR/usr/temp.list"
 		fi
@@ -57,7 +57,7 @@ case "$4" in
 
 		if [ "$1" == "stock" ]
 		then
-		
+
 		mkdir -p $INITRAMFSDIR/lib/modules/
 		cp fs/cifs/cifs.ko $INITRAMFSDIR/lib/modules/cifs.ko
 		cp fs/exfat/exfat.ko $INITRAMFSDIR/lib/modules/exfat.ko
@@ -97,7 +97,7 @@ case "$4" in
 
 		else
 		echo -e "\n\n Copying Modules to Output Folder...\n\n"
-		
+
 		mkdir -p $OUTDIR/system/lib/modules/
 		cp fs/cifs/cifs.ko $OUTDIR/system/lib/modules/cifs.ko
 		cp fs/exfat/exfat.ko $OUTDIR/system/lib/modules/exfat.ko
