@@ -195,20 +195,20 @@ on post-fs
     chown system system /sys/class/sensors/gyro_sensor/temperature
 
     # Install Kernel Module
-    insmod /lib/modules/j4fs.ko
+    insmod /system/lib/modules/j4fs.ko
     # We need to decide j4fs's partition number(mmcblk0pX)
     # loke4
     #mount j4fs /dev/block/mmcblk0p19 /mnt/.lfs wait
     # loke3
     mount j4fs /dev/block/mmcblk0p1 /mnt/.lfs wait
 
-    insmod /lib/modules/param.ko
+    insmod /system/lib/modules/param.ko
     write /sys/class/power_supply/battery/batt_reinit_capacity 1
-    insmod /lib/modules/bthid.ko
+    insmod /system/lib/modules/bthid.ko
 
     # loading exFAT-fs drivers
-    insmod /lib/modules/exfat_core.ko
-    insmod /lib/modules/exfat_fs.ko
+    insmod /system/lib/modules/exfat_core.ko
+    insmod /sysetm/lib/modules/exfat_fs.ko
 
 on post-fs-data
 
