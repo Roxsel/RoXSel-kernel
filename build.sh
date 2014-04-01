@@ -6,7 +6,7 @@ then
 	echo "Usage:"
 	echo "./build.sh 'ROM' 'ANDROID_VERSION' 'RECOVERY'"
 	echo "Available ROM's: cm, stock, miui"
-	echo "Available ANDROID_VERSION's: 4.1; 4.2.2; 4.3.1"
+	echo "Available ANDROID_VERSION's: 4.1.2; 4.2.2; 4.3.1"
 	echo "Available RECOVERY's: cwm, touch, swype (tested only on 4.3.1)"
 	echo "if you want to build kernel for 4.2.2 CyanogenMod Based ROM (like PAC) with touch recovery"
 	echo "./build.sh cm 4.2.2 touch"
@@ -55,22 +55,21 @@ case "$4" in
 		echo -e "\n\n Compiling I8160 Kernel and Modules... \n\n"
 		make -j4 ARCH=arm CROSS_COMPILE=$TOOLCHAIN CONFIG_INITRAMFS_SOURCE=$INITRAMFSDIR
 
+		mkdir -p $OUTDIR/system/lib/modules/
+		cp fs/cifs/cifs.ko $OUTDIR/system/lib/modules/cifs.ko
+		cp fs/exfat/exfat.ko $OUTDIR/system/lib/modules/exfat.ko
+		cp drivers/scsi/scsi_wait_scan.ko $OUTDIR/system/lib/modules/scsi_wait_scan.ko
+		cp drivers/samsung/j4fs/j4fs.ko $OUTDIR/system/lib/modules/j4fs.ko
+		cp drivers/bluetooth/bthid/bthid.ko $OUTDIR/system/lib/modules/bthid.ko
+		cp drivers/char/hwreg/hwreg.ko $OUTDIR/system/lib/modules/hwreg.ko
+		cp drivers/samsung/param/param.ko $OUTDIR/system/lib/modules/param.ko
+		cp drivers/staging/android/logger.ko $OUTDIR/system/lib/modules/logger.ko
+		cp drivers/char/frandom/frandom.ko $OUTDIR/system/lib/modules/frandom.ko
+		cp drivers/char/hw_random/rng-core.ko $OUTDIR/system/lib/modules/rng-core.ko
+		cp drivers/net/wireless/bcmdhd/dhd.ko $OUTDIR/system/lib/modules/dhd.ko
+
 		if [ "$1" == "stock" ]
 		then
-
-		mkdir -p $INITRAMFSDIR/lib/modules/
-		cp fs/cifs/cifs.ko $INITRAMFSDIR/lib/modules/cifs.ko
-		cp fs/exfat/exfat.ko $INITRAMFSDIR/lib/modules/exfat.ko
-		cp drivers/scsi/scsi_wait_scan.ko $INITRAMFSDIR/lib/modules/scsi_wait_scan.ko
-		cp drivers/samsung/j4fs/j4fs.ko $INITRAMFSDIR/lib/modules/j4fs.ko
-		cp drivers/bluetooth/bthid/bthid.ko $INITRAMFSDIR/lib/modules/bthid.ko
-		cp drivers/char/hwreg/hwreg.ko $INITRAMFSDIR/lib/modules/hwreg.ko
-		cp drivers/samsung/param/param.ko $INITRAMFSDIR/lib/modules/param.ko
-		cp drivers/staging/android/logger.ko $INITRAMFSDIR/lib/modules/logger.ko
-		cp drivers/char/frandom/frandom.ko $INITRAMFSDIR/lib/modules/frandom.ko
-		cp drivers/char/hw_random/rng-core.ko $INITRAMFSDIR/lib/modules/rng-core.ko
-		cp drivers/net/wireless/bcmdhd/dhd.ko $INITRAMFSDIR/lib/modules/dhd.ko
-
 
 		echo -e "\n\n Creating zImage...\n\n"
 		make ARCH=arm CROSS_COMPILE=$TOOLCHAIN CONFIG_INITRAMFS_SOURCE=$INITRAMFSDIR zImage
@@ -97,19 +96,6 @@ case "$4" in
 
 		else
 		echo -e "\n\n Copying Modules to Output Folder...\n\n"
-
-		mkdir -p $OUTDIR/system/lib/modules/
-		cp fs/cifs/cifs.ko $OUTDIR/system/lib/modules/cifs.ko
-		cp fs/exfat/exfat.ko $OUTDIR/system/lib/modules/exfat.ko
-		cp drivers/scsi/scsi_wait_scan.ko $OUTDIR/system/lib/modules/scsi_wait_scan.ko
-		cp drivers/samsung/j4fs/j4fs.ko $OUTDIR/system/lib/modules/j4fs.ko
-		cp drivers/bluetooth/bthid/bthid.ko $OUTDIR/system/lib/modules/bthid.ko
-		cp drivers/char/hwreg/hwreg.ko $OUTDIR/system/lib/modules/hwreg.ko
-		cp drivers/samsung/param/param.ko $OUTDIR/system/lib/modules/param.ko
-		cp drivers/staging/android/logger.ko $OUTDIR/system/lib/modules/logger.ko
-		cp drivers/char/frandom/frandom.ko $OUTDIR/system/lib/modules/frandom.ko
-		cp drivers/char/hw_random/rng-core.ko $OUTDIR/system/lib/modules/rng-core.ko
-		cp drivers/net/wireless/bcmdhd/dhd.ko $OUTDIR/system/lib/modules/dhd.ko
 
 		echo -e "\n\n Making flashable ZIP...\n\n"
 		cp arch/arm/boot/zImage $OUTDIR/boot.img
